@@ -16,11 +16,11 @@ Map.socket.on('newMap', function(map)
 		console.log(map[i]);
 		if(map[i].sprite < 75)
 		{
-			Map.context.drawImage(Map.sprites,17*map[i].sprite,0,16,16,map[i].y*16,map[i].x*16,16,16);
+			Map.context.drawImage(Map.sprites,17*map[i].sprite,0,16,16,map[i].y*16*2,map[i].x*16*2,16*2,16*2);
 		}
 		else
 		{
-			Map.context.drawImage(Map.sprites,17*map[i].sprite,0,16,31,map[i].y*16,map[i].x*16,16,31);
+			Map.context.drawImage(Map.sprites,17*map[i].sprite,0,16,31,map[i].y*16*2,(((map[i].x+1)*16)-31)*2,16*2,31*2);
 		}
 	}
 });
