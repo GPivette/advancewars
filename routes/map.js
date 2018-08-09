@@ -393,11 +393,19 @@ function respond(socket)
 	socket.on('requireMap',async function()
 	{
 		var map = await promisedMongoOne('map',{});
-		map = map.map;
+		map = map;
 
 		socket.emit('newMap',map);
+	});
 
-		console.log('nouvelle map')
+	socket.on('click', async function(position)
+	{
+		var map = await promisedMongoOne('map',{});
+		map = map.map;
+
+		var type = findInArray(map,position);
+
+		socket.emit('caseType',type[0]);
 	});
 }
 
