@@ -82,36 +82,39 @@ function respond(socket)
 		socket.emit('newGame',battle);
 	});
 
-	socket.on('click', async function(position)
+	socket.on('click', async function(position, selected)
 	{
-		// 
-		// await promisedInsert('game',battle);
-
-		var battle = await promisedMongoOne('game',{'begin_time': Game.begin_time});
-		var map = battle.map.map;
-		var unitsArray = battle.units;
-
-		var tile = findInArray(map,position);
-		var unit = findInArray(unitsArray,position);
-
-		if(unit.length > 0)
+		if(selected)
 		{
-			socket.emit('unitSelected', maps.findCasesToGo(unit[0], battle));
+			socket.emit('unitSelected',[]);
 		}
 		else
 		{
-			if(data.buildings.includes(tile[0].type))
+			var battle = await promisedMongoOne('game',{'begin_time': Game.begin_time});
+			var map = battle.map.map;
+			var unitsArray = battle.units;
+
+			var tile = findInArray(map,position);
+			var unit = findInArray(unitsArray,position);
+
+			if(unit.length > 0)
 			{
-				if(tile[0].type == 'Base')
+				socket.emit('unitSelected', maps.findCasesToGo(unit[0], battle));
+			}
+			else
+			{
+				if(data.buildings.includes(tile[0].type))
 				{
-					var newUnit = await units.createUnit({'x':tile[0].x, 'y':tile[0].y},{'id':1});
-					battle.units.push(newUnit);
-					await promisedUpdate('game',{'players':battle.players, 'begin_time': battle.begin_time},battle);
-					socket.emit('newUnit', newUnit);
+					if(tile[0].type == 'Base')
+					{
+						var newUnit = await units.createUnit({'x':tile[0].x, 'y':tile[0].y},{'id':4});
+						battle.units.push(newUnit);
+						await promisedUpdate('game',{'players':battle.players, 'begin_time': battle.begin_time},battle);
+						socket.emit('newUnit', newUnit);
+					}
 				}
 			}
 		}
-
 	});
 
 	socket.on('createNewMap',async function(map)

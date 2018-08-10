@@ -23,7 +23,7 @@ function getMousePos(canvas, evt)
 Map.canvas.addEventListener('mousedown', function(evt) 
 	{
         var mousePos = getMousePos(Map.canvas, evt);
-        Map.socket.emit('click',mousePos);
+        Map.socket.emit('click',mousePos,Map.highlight);
      }, false);
 
 function brighten(pixels, adjustment)
@@ -35,12 +35,6 @@ function brighten(pixels, adjustment)
 			d[i+1] += adjustment;
 			d[i+2] += adjustment;
 		}
-		return pixels;
-	}
-
-function darken(pixels, pixels_data)
-	{
-		pixels.data = pixels_data;
 		return pixels;
 	}
 
@@ -87,7 +81,40 @@ Map.socket.on('caseType', function(mapCase)
 		Map.highlight = !Map.highlight;
 	});
 
+Map.socket.on('unitSelected', function(tiles)
+{
+	var adjustment = 60;
+
+	if(Map.highlight)
+	{
+		for (var i = 0; i < Map.highlighted.length; i++)
+		{
+			if(Map.highlighted[i].sprite < 75)
+			{
+				Map.context.drawImage(Map.sprites,17*Map.highlighted[i].sprite,0,16,16,Map.highlighted[i].y*Map.ratio,Map.highlighted[i].x*Map.ratio,Map.ratio,Map.ratio);
+			}
+			else
+			{
+				Map.context.drawImage(Map.sprites,17*Map.highlighted[i].sprite,0,16,31,Map.highlighted[i].y*Map.ratio,((Map.highlighted[i].x-(15/16))*Map.ratio),Map.ratio,(31/16)*Map.ratio);
+			}
+		}
+		Map.highlighted = [];
+	}
+	else
+	{
+		for (var i = 0; i < tiles.length; i++) 
+	 	{
+	 		var pixels = Map.context.getImageData(tiles[i].tile.y*Map.ratio,tiles[i].tile.x*Map.ratio,Map.ratio,Map.ratio);
+			Map.context.putImageData(brighten(pixels,adjustment),tiles[i].tile.y*Map.ratio,tiles[i].tile.x*Map.ratio);
+			Map.highlighted.push(tiles[i].tile);
+		}
+		Map.highlighted.sort(function(a, b){return a.x - b.x});
+	}
+
+	Map.highlight = !Map.highlight;
+});
+
 Map.socket.on('newUnit', function(unit)
 {
 	Map.context.drawImage(Map.units_sprites,16*unit.sprite.right,0,16,16,unit.y*Map.ratio,unit.x*Map.ratio,Map.ratio,Map.ratio);
-})
+}) 

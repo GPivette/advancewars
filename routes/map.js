@@ -393,7 +393,8 @@ function findCasesToGo(unit, battle)
 	var map = battle.map.map;
 	var added = true;
 	var casesToGo = [];
-	casesToGo.push({'position': {'x':unit.x, 'y':unit.y}, 'points_left': unit.movement.pointspoints, 'treated': false});
+	var used = [];
+	casesToGo.push({'tile': findInArray(map, {'x':unit.x, 'y':unit.y})[0], 'points_left': unit.movement.pointspoints, 'treated': false});
 
 	while(added)
 	{
@@ -403,32 +404,42 @@ function findCasesToGo(unit, battle)
 			if(!casesToGo[i].treated)
 			{
 				casesToGo[i].treated = true;
+
 				for (var k = data.contact.length - 1; k >= 0; k--) 
 				{
-					var newPosition = {'x':unit.x + data.contact[k].x, 'y':unit.x + data.contact[k].y};
+					var newPosition = {'x':casesToGo[i].tile.x + data.contact[k].x, 'y':casesToGo[i].tile.y + data.contact[k].y};
 					var tile = findInArray(map, newPosition);
-					var availablePoints = casesToGo[i].points_left - unit.movement[tile.type];
-					if(unit.movement[tile.type] != 0)
+					var type = typy(unit, 'movement.'+tile[0].type).safeObject;
+					var availablePoints = casesToGo[i].points_left - type;
+
+					if(findInArray(used, newPosition).length == 0)
 					{
-						console.log('Type')
-						if(availablePoints > 0)
+						if(type != 0)
 						{
-							var newCase = {'tile': tile, 'points_left': availablePoints, 'treated': false}
-							casesToGo.push(newCase);
-							added =true;
+							if(availablePoints >= 0)
+							{
+								if(availablePoints > 0)
+								{
+									var newCase = {'tile': tile[0], 'points_left': availablePoints, 'treated': false}
+								}
+								if(availablePoints == 0)
+								{
+									var newCase = {'tile': tile[0], 'points_left': availablePoints, 'treated': true}								
+								}
+								casesToGo.push(newCase);
+								added =true;
+								used.push(newCase.tile);
+							}
 						}
-						if(availablePoints == 0)
-						{
-							var newCase = {'tile': tile, 'points_left': availablePoints, 'treated': true}
-							casesToGo.push(newCase);
-							added =true;
-						}
-					}
+					}	
 				}
 			}
+			used.push(casesToGo[i].tile);
 		}
 	}
-	console.log(casesToGo)
+	casesToGo.shift();
+	casesToGo.sort(function(a, b){return a.tile.x - b.tile.x});
+	return casesToGo;
 }
 
 module.exports.router = router;
