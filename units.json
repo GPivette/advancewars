@@ -92,6 +92,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 0,
+      "special_right": 28
    }
 },
  {
@@ -187,6 +191,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 1,
+      "special_right": 27
    }
 },
  {
@@ -282,6 +290,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 4,
+      "special_right": null
    }
 },
  {
@@ -377,6 +389,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 5,
+      "special_right": null
    }
 },
  {
@@ -472,6 +488,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 6,
+      "special_right": null
    }
 },
  {
@@ -567,6 +587,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 7,
+      "special_right": null
    }
 },
  {
@@ -662,6 +686,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 8,
+      "special_right": null
    }
 },
  {
@@ -757,6 +785,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 3,
+      "special_right": 26
    }
 },
  {
@@ -852,6 +884,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 9,
+      "special_right": null
    }
 },
  {
@@ -947,6 +983,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 10,
+      "special_right": null
    }
 },
  {
@@ -1042,6 +1082,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 13,
+      "special_right": null
    }
 },
  {
@@ -1137,6 +1181,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 12,
+      "special_right": null
    }
 },
  {
@@ -1232,6 +1280,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 16,
+      "special_right": null
    }
 },
  {
@@ -1327,6 +1379,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 17,
+      "special_right": null
    }
 },
  {
@@ -1422,6 +1478,10 @@
          "Lander": 0,
          "Supply": 0
       }
+   },
+   "sprite": {
+      "right": 15,
+      "special_right": null
    }
 },
  {
@@ -1517,6 +1577,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 14,
+      "special_right": 29
    }
 },
  {
@@ -1612,101 +1676,10 @@
          "Lander": null,
          "Supply": null
       }
-   }
-},
- {
-   "id": 18,
-   "unit_name": "Cargo",
-   "3_letters_name": "CAR",
-   "type": "AIR",
-   "movement": {
-      "Plains": 1,
-      "Forest": 1,
-      "Mountains": 1,
-      "Road": 1,
-      "River": 1,
-      "Sea": 1,
-      "Shoal": 1,
-      "Reef": 1,
-      "Bridge": 1,
-      "HQ": 1,
-      "City": 1,
-      "Base": 1,
-      "Airport": 1,
-      "Port": 1,
-      "Comm Tower": 1,
-      "pointspoints": 9
    },
-   "fuel": {
-      "stock": 99,
-      "turn": 5,
-      "turn_special": 0
-   },
-   "vision": 2,
-   "primary_weapon": {
-      "id": 0,
-      "name": "",
-      "begin_range": null,
-      "end_range": null,
-      "damage_to": {
-         "Infantry": null,
-         "Mech": null,
-         "Recon": null,
-         "Tank": null,
-         "Md_Tank": null,
-         "Neotank": null,
-         "Megatank": null,
-         "APC": null,
-         "Artillery": null,
-         "Rockets": null,
-         "AntiAir": null,
-         "Missiles": null,
-         "Fighter": null,
-         "Bomber": null,
-         "B_Copter": null,
-         "T_Copter": null,
-         "Stealth": null,
-         "Cargo": null,
-         "Battleship": null,
-         "Cruiser": null,
-         "Carrier": null,
-         "Sub": null,
-         "Lander": null,
-         "Supply": null
-      },
-      "ammo": 0
-   },
-   "secondary_weapon": {
-      "id": 0,
-      "name": "",
-      "begin_range": null,
-      "end_range": null,
-      "damage_to": {
-         "Infantry": null,
-         "Mech": null,
-         "Recon": null,
-         "Tank": null,
-         "Md_Tank": null,
-         "Neotank": null,
-         "Megatank": null,
-         "APC": null,
-         "Artillery": null,
-         "Rockets": null,
-         "AntiAir": null,
-         "Missiles": null,
-         "Fighter": null,
-         "Bomber": null,
-         "B_Copter": null,
-         "T_Copter": null,
-         "Stealth": null,
-         "Cargo": null,
-         "Battleship": null,
-         "Cruiser": null,
-         "Carrier": null,
-         "Sub": null,
-         "Lander": null,
-         "Supply": null
-      }
+   "sprite": {
+      "right": 18,
+      "special_right": null
    }
 },
  {
@@ -1802,6 +1775,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 22,
+      "special_right": null
    }
 },
  {
@@ -1897,6 +1874,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 24,
+      "special_right": null
    }
 },
  {
@@ -1992,6 +1973,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 25,
+      "special_right": null
    }
 },
  {
@@ -2087,6 +2072,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 23,
+      "special_right": 31
    }
 },
  {
@@ -2182,6 +2171,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 21,
+      "special_right": 30
    }
 },
  {
@@ -2277,6 +2270,10 @@
          "Lander": null,
          "Supply": null
       }
+   },
+   "sprite": {
+      "right": 20,
+      "special_right": null
    }
 }
 ]
