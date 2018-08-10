@@ -23,6 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 var index = require('./routes/index');
 var map = require('./routes/map');
 var data = require('./routes/data');
+var game = require('./routes/game');
+var units = require('./routes/units');
 
 var indexRouter = index.router;
 
@@ -46,7 +48,7 @@ app.use(function(err, req, res, next) {
 
 io.sockets.on('connection', function (socket) 
 {
-    map.respond(socket);
+  game.respond(socket);
 });
 
 module.exports.router = app;

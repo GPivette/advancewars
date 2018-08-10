@@ -84,9 +84,8 @@ function getMaze(map)
 	return list;
 }
 
-async function getFullMap()
+async function getFullMap(simpleMap)
 {
-	var simpleMap = await promisedMongoOne('map',{},{});
 	var mapArray = simpleMap.map;
 	var map =[];
 	var query;
@@ -381,36 +380,59 @@ async function getFullMap()
 
 		//console.log(map);
 
-		sprite = null;
+		sprite = null; 
 		options = null;
 		query = {};
 	}
 	return map;
 }
 
-function respond(socket) 
+function findCasesToGo(unit, battle)
 {
-	socket.on('requireMap',async function()
+	var units = battle.units;
+	var map = battle.map.map;
+	var added = true;
+	var casesToGo = [];
+	casesToGo.push({'position': {'x':unit.x, 'y':unit.y}, 'points_left': unit.movement.pointspoints, 'treated': false});
+
+	while(added)
 	{
-		var map = await promisedMongoOne('map',{});
-		map = map;
-
-		socket.emit('newMap',map);
-	});
-
-	socket.on('click', async function(position)
-	{
-		var map = await promisedMongoOne('map',{});
-		map = map.map;
-
-		var type = findInArray(map,position);
-
-		socket.emit('caseType',type[0]);
-	});
+		added = false;
+		for (var i = casesToGo.length - 1; i >= 0; i--) 
+		{
+			if(!casesToGo[i].treated)
+			{
+				casesToGo[i].treated = true;
+				for (var k = data.contact.length - 1; k >= 0; k--) 
+				{
+					var newPosition = {'x':unit.x + data.contact[k].x, 'y':unit.x + data.contact[k].y};
+					var tile = findInArray(map, newPosition);
+					var availablePoints = casesToGo[i].points_left - unit.movement[tile.type];
+					if(unit.movement[tile.type] != 0)
+					{
+						console.log('Type')
+						if(availablePoints > 0)
+						{
+							var newCase = {'tile': tile, 'points_left': availablePoints, 'treated': false}
+							casesToGo.push(newCase);
+							added =true;
+						}
+						if(availablePoints == 0)
+						{
+							var newCase = {'tile': tile, 'points_left': availablePoints, 'treated': true}
+							casesToGo.push(newCase);
+							added =true;
+						}
+					}
+				}
+			}
+		}
+	}
+	console.log(casesToGo)
 }
 
 module.exports.router = router;
-module.exports.respond = respond;
+module.exports.findCasesToGo = findCasesToGo;
 
 /*
 

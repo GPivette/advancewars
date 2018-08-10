@@ -6,15 +6,17 @@ Map.canvas.width = window.innerWidth;
 Map.context = Map.canvas.getContext("2d");
 Map.sprites = new Image();
 Map.sprites.src = '/images/map_sprites.png';
+Map.units_sprites = new Image();
+Map.units_sprites.src = '/images/Map_units.png';
 Map.highlight = false;
 Map.highlighted = [];
 
-Map.socket.emit('requireMap');
+Map.socket.emit('requireGame');
 
 function getMousePos(canvas, evt) 
 	{
     var rect = canvas.getBoundingClientRect();
-    var pos = {'y': Math.floor((evt.clientX - rect.left)/Map.ratio), 'x': Math.floor((evt.clientY - rect.top)/Map.ratio)};
+    var pos = {'x': Math.floor((evt.clientY - rect.top)/Map.ratio), 'y': Math.floor((evt.clientX - rect.left)/Map.ratio)};
     return pos;
 		}
 
@@ -42,8 +44,11 @@ function darken(pixels, pixels_data)
 		return pixels;
 	}
 
-Map.socket.on('newMap', function(map)
+Map.socket.on('newGame', function(battle)
 	{
+		var map = battle.map;
+		var unitsList = battle.units;
+
 		Map.ratio = Math.min(Map.canvas.height/map.H,Map.canvas.width/map.W);
 		console.log(Map.ratio)
 
@@ -61,18 +66,28 @@ Map.socket.on('newMap', function(map)
 				Map.context.drawImage(Map.sprites,17*map.map[i].sprite,0,16,31,map.map[i].y*Map.ratio,((map.map[i].x-(15/16))*Map.ratio),Map.ratio,(31/16)*Map.ratio);
 			}
 		}
+
+		for (var i = unitsList.length - 1; i >= 0; i--) 
+		{
+			Map.context.drawImage(Map.units_sprites,16*unitsList[i].sprite.right,0,16,16,unitsList[i].position.y*Map.ratio,unitsList[i].position.x*Map.ratio,Map.ratio,Map.ratio);
+		}
 	});
 
 Map.socket.on('caseType', function(mapCase)
 	{
 		var adjustment = 60;
-		var pixels = Map.context.getImageData(0,0,Map.ratio,Map.ratio);
+		var pixels = Map.context.getImageData(mapCase.y*Map.ratio,mapCase.x*Map.ratio,Map.ratio,Map.ratio);
 
 		if (Map.highlight)
 		{	
 			Map.context.drawImage(Map.sprites,17*mapCase.sprite,0,16,16,mapCase.y*Map.ratio,mapCase.x*Map.ratio,Map.ratio,Map.ratio)
 		}
-		else{Map.context.putImageData(brighten(pixels,adjustment),0,0);}
+		else{Map.context.putImageData(brighten(pixels,adjustment),mapCase.y*Map.ratio,mapCase.x*Map.ratio);}
 
 		Map.highlight = !Map.highlight;
 	});
+
+Map.socket.on('newUnit', function(unit)
+{
+	Map.context.drawImage(Map.units_sprites,16*unit.sprite.right,0,16,16,unit.y*Map.ratio,unit.x*Map.ratio,Map.ratio,Map.ratio);
+})
