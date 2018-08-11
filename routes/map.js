@@ -409,26 +409,30 @@ function findCasesToGo(unit, battle)
 				{
 					var newPosition = {'x':casesToGo[i].tile.x + data.contact[k].x, 'y':casesToGo[i].tile.y + data.contact[k].y};
 					var tile = findInArray(map, newPosition);
-					var type = typy(unit, 'movement.'+tile[0].type).safeObject;
-					var availablePoints = casesToGo[i].points_left - type;
 
-					if(findInArray(used, newPosition).length == 0)
+					if(tile.length > 0)
 					{
-						if(type != 0)
+						var type = typy(unit, 'movement.'+tile[0].type).safeObject;
+						var availablePoints = casesToGo[i].points_left - type;
+
+						if(findInArray(used, newPosition).length == 0)
 						{
-							if(availablePoints >= 0)
+							if(type != 0)
 							{
-								if(availablePoints > 0)
+								if(availablePoints >= 0)
 								{
-									var newCase = {'tile': tile[0], 'points_left': availablePoints, 'treated': false}
+									if(availablePoints > 0)
+									{
+										var newCase = {'tile': tile[0], 'points_left': availablePoints, 'treated': false}
+									}
+									if(availablePoints == 0)
+									{
+										var newCase = {'tile': tile[0], 'points_left': availablePoints, 'treated': true}								
+									}
+									casesToGo.push(newCase);
+									added =true;
+									used.push(newCase.tile);
 								}
-								if(availablePoints == 0)
-								{
-									var newCase = {'tile': tile[0], 'points_left': availablePoints, 'treated': true}								
-								}
-								casesToGo.push(newCase);
-								added =true;
-								used.push(newCase.tile);
 							}
 						}
 					}	
@@ -437,62 +441,9 @@ function findCasesToGo(unit, battle)
 			used.push(casesToGo[i].tile);
 		}
 	}
-	casesToGo.shift();
 	casesToGo.sort(function(a, b){return a.tile.x - b.tile.x});
 	return casesToGo;
 }
 
 module.exports.router = router;
 module.exports.findCasesToGo = findCasesToGo;
-
-/*
-
-***********ADD***************
-var map = [
-  [2,1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,2,2,2,2,2  ],
-  [2,2,2,2,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,2,2,1,"B",2,2  ],
-  [2,6,6,2,2,1,1,6,6,6,6,6,6,6,1,2,1,6,6,6,6,6,6,6,2,1,1,1,1,1,2  ],
-  [2,2,2,2,2,2,2,6,6,6,6,6,6,1,"B",1,"B",1,6,6,6,6,6,6,2,1,1,1,1,1,2  ],
-  [2,2,1,1,1,1,"C",2,2,2,2,2,2,2,1,"C",2,1,2,2,2,2,2,2,2,"C",1,1,1,2,1  ],
-  [2,1,1,1,1,"C",1,6,6,6,6,6,6,2,1,4,1,2,6,6,6,6,6,6,1,1,"C",1,1,1,2  ],
-  [2,1,1,"C3",1,1,6,6,6,6,6,6,6,"E",1,4,1,"E",6,6,6,6,6,6,6,"E",1,"C",1,1,2  ],
-  [2,1,"C",4,1,"E",6,6,6,6,6,6,6,6,7,7,7,6,6,6,6,6,6,6,7,1,"C",4,1,1,1  ],
-  [2,2,1,4,1,2,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,1,1,4,2,1,1  ],
-  [2,1,2,4,2,1,7,6,6,6,6,6,6,6,7,7,7,6,6,6,6,6,6,6,7,1,"C",4,1,1,2  ],
-  [1,1,1,4,1,7,6,6,6,6,6,6,6,7,1,4,2,7,7,6,6,6,6,6,7,1,2,4,"B2",1,2  ],
-  [2,1,"B",4,1,7,6,6,6,6,6,6,7,1,1,4,1,1,1,7,6,6,6,6,6,7,1,4,2,1,2  ],
-  [2,1,1,4,1,7,6,6,6,6,6,7,1,1,"C",4,"B","C",1,1,7,6,6,6,6,7,"B",4,1,2,2  ],
-  [2,2,1,4,"B",7,6,6,6,6,7,1,2,"B",1,4,4,4,4,4,9,9,9,9,9,9,4,4,"A1",1,2  ],
-  [2,2,"A0",4,4,9,9,9,9,9,9,4,4,4,4,4,1,2,2,1,7,6,6,6,6,7,1,1,1,1,1  ],
-  [2,1,2,2,1,7,6,6,6,6,7,1,2,1,1,2,"B",1,1,7,6,6,6,6,6,7,1,1,2,2,1  ],
-  [2,1,1,1,1,7,6,6,6,6,6,6,"E",2,1,1,2,"E",6,6,6,6,6,6,7,1,1,2,6,6,2  ],
-  [1,1,2,1,1,7,6,6,6,6,6,6,6,6,2,1,1,6,6,6,6,6,6,6,7,1,1,1,2,2,2  ],
-  [1,2,1,1,1,1,7,6,6,6,6,6,6,6,7,7,7,6,6,6,6,6,6,7,1,1,1,1,1,1,2  ],
-  [2,1,"B","B",1,1,7,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,1,1,1,"B","B",1,2  ],
-  [2,"B",2,2,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,1,2,"C",1,1,1,1  ],
-  [2,1,1,1,"C",1,"E",6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,"E",1,1,"B","B",1,2  ],
-  [2,2,"B3",1,1,1,1,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,2,2,2,1,1,2  ],
-  [6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6  ]]
-		//getFullMap();
-		var maze = getMaze(map);
-		MongoClient.connect(url, function(err, db) {
-		  if (err) throw err;
-		  var dbo = db.db("advancewars");
-		  dbo.collection("map").insertOne({'name':'Map1', 'map':maze}, function(err, res) {
-		    if (err) throw err;
-		    console.log("1 document inserted");
-		    db.close();
-		  });
-		});
-
-******UPDATE***********
-MongoClient.connect(url, function(err, db) {
-		  if (err) throw err;
-		  var dbo = db.db("advancewars");
-		  dbo.collection("map").updateOne({'name':'Map1'},{$set:{'map':map}}, function(err, res) {
-		    if (err) throw err;
-		    console.log("1 document updated");
-		    db.close();
-		  });
-		});
-		*/

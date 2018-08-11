@@ -6,7 +6,8 @@ var data = require('./data');
 var maps = require('./map');
 var units = require('./units');
 var typy = require('typy');
-var Game = {};
+var Game = {'units': [],'building':{}};
+
 
 function promisedMongoOne(collection, query)
 {
@@ -82,39 +83,100 @@ function respond(socket)
 		socket.emit('newGame',battle);
 	});
 
-	socket.on('click', async function(position, selected)
+	socket.on('click', async function(position, selected, selectedCases, unitsToCreate)
 	{
-		if(selected)
+		var battle = await promisedMongoOne('game',{'begin_time': Game.begin_time});
+		if(unitsToCreate.length > 0)
 		{
-			socket.emit('unitSelected',[]);
+			var unitToAdd = findInArray(unitsToCreate, {'x':position.x})
+			if(unitToAdd.length >0)
+			{
+				console.log(unitToAdd)
+				var newUnit = await units.createUnit({'x':Game.building.x, 'y':Game.building.y},{'id':unitToAdd[0].unit.id});
+				battle.units.push(newUnit);
+				await promisedUpdate('game',{'players':battle.players, 'begin_time': battle.begin_time},battle);
+				Game.building= {};
+				socket.emit('newUnit', newUnit);
+			}
 		}
 		else
 		{
-			var battle = await promisedMongoOne('game',{'begin_time': Game.begin_time});
-			var map = battle.map.map;
-			var unitsArray = battle.units;
-
-			var tile = findInArray(map,position);
-			var unit = findInArray(unitsArray,position);
-
-			if(unit.length > 0)
+			if(position.y >=0)
 			{
-				socket.emit('unitSelected', maps.findCasesToGo(unit[0], battle));
-			}
-			else
-			{
-				if(data.buildings.includes(tile[0].type))
+				if(selected)
 				{
-					if(tile[0].type == 'Base')
+					var dest = findInArray(selectedCases,position);
+					if(dest.length > 0)
 					{
-						var newUnit = await units.createUnit({'x':tile[0].x, 'y':tile[0].y},{'id':4});
-						battle.units.push(newUnit);
-						await promisedUpdate('game',{'players':battle.players, 'begin_time': battle.begin_time},battle);
-						socket.emit('newUnit', newUnit);
+						dest = dest[0];
+						var unitToAttack = findInArray(battle.units,position);
+						if(unitToAttack.length > 0)
+						{
+
+						}
+						else
+						{
+							if(!Game.unit.moved)
+							{
+								battle = units.move(battle,Game.unit, dest); 
+								await promisedUpdate('game',{'begin_time': Game.begin_time},battle);
+							}
+						}
+							
+						// if (units.isAttackableUnit(dest).length > 0)
+						// {
+						// 	units.attack(unit1, unit2);
+						// }
+						// else
+						// {
+						 	
+						// }
+					}
+					socket.emit('unitSelected',[],battle.units);
+					Game.unit = {};
+				}
+				else
+				{
+					var map = battle.map.map;
+					var unitsArray = battle.units;
+
+					var tile = findInArray(map,position);
+					var unit = findInArray(unitsArray,position);
+
+					if(unit.length > 0)
+					{
+						Game.unit = unit[0];
+						var casesToGo = maps.findCasesToGo(unit[0], battle);
+						for (var i = unitsArray.length - 1; i >= 0; i--) 
+						{
+							var foundUnit = findInArray(casesToGo, {'x': unitsArray[i].x, 'y': unitsArray[i].y}) 
+							if(foundUnit.length > 0)
+							{
+								Game.units.push(foundUnit[0]);
+							}
+						}
+						socket.emit('unitSelected', maps.findCasesToGo(unit[0], battle), Game.units);
+					}
+					else
+					{
+						if(data.buildings.includes(tile[0].type))
+						{
+							if(tile[0].type == 'Base')
+							{
+								// var newUnit = await units.createUnit({'x':tile[0].x, 'y':tile[0].y},{'id':4});
+								// battle.units.push(newUnit);
+								// await promisedUpdate('game',{'players':battle.players, 'begin_time': battle.begin_time},battle);
+								// socket.emit('newUnit', newUnit);
+								Game.building = tile[0];
+								socket.emit('baseSelected', await units.getBaseUnits());
+							}
+						}
 					}
 				}
 			}
+			
 		}
+			
 	});
 
 	socket.on('createNewMap',async function(map)
