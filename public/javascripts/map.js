@@ -1,5 +1,5 @@
 Map={};
-Map.socket = io.connect('http://172.20.1.30:3000/'); 
+Map.socket = io.connect('http://192.168.1.100:3000/'); 
 Map.canvas = document.getElementById('map');
 Map.canvas.height = window.innerHeight;
 Map.canvas.width = window.innerWidth;
@@ -53,7 +53,7 @@ Map.socket.on('newGame', function(battle)
 
 		for (var i = map.map.length - 1; i >= 0; i--) 
 		{
-			if(map.map[i].sprite < 75)
+			if(map.map[i].sprite < 59)
 			{
 				Map.context.drawImage(Map.sprites,17*map.map[i].sprite,0,16,16,(6+map.map[i].y)*Map.ratio,map.map[i].x*Map.ratio,Map.ratio,Map.ratio);
 			}
@@ -91,7 +91,7 @@ Map.socket.on('unitSelected', function(tiles, units)
 	{
 		for (var i = 0; i < Map.highlighted.length; i++)
 		{
-			if(Map.highlighted[i].sprite < 75)
+			if(Map.highlighted[i].sprite < 60)
 			{
 				Map.context.drawImage(Map.sprites,17*Map.highlighted[i].sprite,0,16,16,(6+Map.highlighted[i].y)*Map.ratio,Map.highlighted[i].x*Map.ratio,Map.ratio,Map.ratio);
 			}

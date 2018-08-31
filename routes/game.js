@@ -6,7 +6,7 @@ var data = require('./data');
 var maps = require('./map');
 var units = require('./units');
 var typy = require('typy');
-var Game = {'units': [],'building':{}};
+var Game = {'units': [],'building':{}}; 
 
 
 function promisedMongoOne(collection, query)
